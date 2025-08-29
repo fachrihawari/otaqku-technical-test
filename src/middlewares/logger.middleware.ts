@@ -10,7 +10,7 @@ const fileTransport = pino.transport({
 
 const transport = process.env.NODE_ENV === 'production' ? fileTransport : pinoPretty()
 
-export const logger = pinoHttp({
+export const loggerMiddleware = pinoHttp({
   enabled: process.env.NODE_ENV !== 'test',
   logger: pino(transport)
 });

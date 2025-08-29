@@ -1,21 +1,21 @@
 import 'dotenv/config';
 
 import express from 'express';
-import { logger } from './middlewares/logger';
+import { loggerMiddleware } from './middlewares/logger.middleware';
+import { swaggerServe, swaggerSetup } from './middlewares/swagger.middleware';
+import { publicRoutes } from './routes/public.route';
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.use(logger);
+// Middlewares
+app.use(loggerMiddleware);
+app.use('/api-docs', swaggerServe, swaggerSetup);
 
-app.get('/', (req, res) => {
-  req.log.info('Root endpoint accessed');
-  res.send('Welcome to otaQku tasks management API');
-});
-app.get('/tasks', (_, res) => {
-  res.send('Welcome tasks list');
-});
+// Routes
+app.use(publicRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
+  console.log(`API Docs is running on http://localhost:${port}/api-docs`);
 });
