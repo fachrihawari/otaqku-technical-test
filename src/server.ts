@@ -1,6 +1,7 @@
 import 'dotenv/config';
 
 import express from 'express';
+import { errorMiddleware } from './middlewares/error.middleware';
 import { loggerMiddleware } from './middlewares/logger.middleware';
 import { swaggerServe, swaggerSetup } from './middlewares/swagger.middleware';
 import { publicRoutes } from './routes/public.route';
@@ -14,6 +15,9 @@ app.use('/api-docs', swaggerServe, swaggerSetup);
 
 // Routes
 app.use(publicRoutes);
+
+// Error Middlewares
+app.use(errorMiddleware);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
