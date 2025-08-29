@@ -1,7 +1,7 @@
-import express from 'express'
+import express from 'express';
 import { PublicController } from '../controllers/public.controller';
 
-const publicRoutes = express.Router()
+const publicRoutes = express.Router();
 
 /**
  * @swagger
@@ -14,4 +14,4 @@ const publicRoutes = express.Router()
  */
 publicRoutes.get('/', PublicController.home);
 
-export { publicRoutes }
+export { publicRoutes };

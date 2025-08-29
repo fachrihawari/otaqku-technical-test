@@ -1,4 +1,4 @@
-import 'dotenv/config'
+import 'dotenv/config';
 
 import { hashPassword } from '../helpers/hash';
 import { db } from './db';
