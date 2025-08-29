@@ -1,3 +1,5 @@
+import 'dotenv/config'
+
 import { hashPassword } from '../helpers/hash';
 import { db } from './db';
 import { tasksTable, usersTable } from './schema';
@@ -36,6 +38,8 @@ async function seed() {
     },
   ]);
   console.log('✅ Tasks successfully inserted');
+
+  process.exit(0);
 }
 
 seed().catch(console.error);
