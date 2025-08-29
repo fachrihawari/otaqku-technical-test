@@ -1,16 +1,30 @@
 import path from 'node:path'
 import pino from "pino";
 import pinoHttp from "pino-http";
-import pinoPretty from "pino-pretty";
 
 const fileTransport = pino.transport({
   target: 'pino/file',
   options: { destination: path.join(process.cwd(), 'dist/tmp/app.log') },
 });
 
-const transport = process.env.NODE_ENV === 'production' ? fileTransport : pinoPretty()
+const prettyTransport = pino.transport({
+  target: 'pino-pretty',
+  options: {
+    colorize: true,
+    translateTime: 'HH:MM:ss',
+    ignore: 'pid,hostname,reqId,responseTime'
+  }
+});
+
+const transport = process.env.NODE_ENV === 'production' ? fileTransport : prettyTransport
 
 export const loggerMiddleware = pinoHttp({
   enabled: process.env.NODE_ENV !== 'test',
-  logger: pino(transport)
+  logger: pino(transport),
+  customLogLevel: (_, res, err) => {
+    const statusCode = res.statusCode || 200
+    if (statusCode >= 400 && statusCode < 500) return 'warn'
+    if (statusCode >= 500 || err) return 'error'
+    return 'info'
+  },
 });
