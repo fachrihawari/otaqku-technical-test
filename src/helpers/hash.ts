@@ -1,4 +1,4 @@
-import { compare, hash } from "bcryptjs";
+import { compare, hash } from 'bcryptjs';
 
 // Hash a plain password
 export function hashPassword(plainPassword: string) {

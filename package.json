@@ -8,7 +8,8 @@
     "start": "node ./dist/server.js",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:seed": "node --import=tsx ./src/db/seed.ts"
+    "db:seed": "node --import=tsx ./src/db/seed.ts",
+    "lint": "npx @biomejs/biome check --write ."
   },
   "author": "Fachri Hawari<fachri.hawari@gmail.com>",
   "license": "UNLICENSED",
