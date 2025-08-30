@@ -54,7 +54,7 @@
 - [ ] Authorization tests (user isolation)
 
 ## 🎯 Bonus Features (Optional)
-- [ ] Task filtering (by status, date, etc.)
+- [x] Task filtering (by status, date, etc.)
 - [x] Pagination in task listing
 - [ ] Bulk update endpoint
 - [x] API documentation (Swagger/OpenAPI)
