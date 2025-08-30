@@ -10,6 +10,9 @@ servers:
   - url: https://otaqku-api.hawari.dev
     description: Production server
 
+security:
+  - bearerAuth: []
+
 components:
   schemas:
     AuthBody:
@@ -18,12 +21,11 @@ components:
         email:
           type: string
           format: email
-          example: "user@example.com"
+          example: "user@mail.com"
         password:
           type: string
           minLength: 6
-          example: "password123"
-
+          example: "secret"
     User:
       allOf:
         - $ref: "#/components/schemas/AuthBody"
@@ -77,12 +79,12 @@ components:
               format: date-time
               example: "2023-01-01T00:00:00Z"
 
-
   securitySchemes:
     bearerAuth: # arbitrary name for the security scheme
       type: http
       scheme: bearer
       bearerFormat: JWT # optional, arbitrary value for documentation purposes
+
   responses:
     UnauthorizedError:
       description: Unauthorized
@@ -171,7 +173,7 @@ paths:
                   email:
                     type: string
                     format: email
-                    example: "user@example.com"
+                    example: "user@mail.com"
         422:
           description: Unprocessable Entity
           content:
@@ -272,8 +274,23 @@ paths:
     get:
       description: Get all tasks
       tags: [Tasks]
-      security:
-        - bearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+        - in: query
+          name: status
+          schema:
+            type: enum
+            enum: [pending, in_progress, completed]
+                
       responses:
         200:
           description: Success

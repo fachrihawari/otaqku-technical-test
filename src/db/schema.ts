@@ -15,17 +15,20 @@ export const users = pgTable('users', {
   created_at: timestamp().notNull().defaultNow(),
 });
 
-export const taskStatus = pgEnum('task_status', [
-  'pending',
-  'in_progress',
-  'completed',
-]);
+export enum TaskStatus {
+    PENDING = "pending",
+    IN_PROGRESS = "in_progress",
+    COMPLETED = "completed",
+}
+
+export const taskStatus = pgEnum('task_status', TaskStatus);
+
 
 export const tasks = pgTable('tasks', {
   id: uuid().primaryKey().defaultRandom(),
   title: varchar({ length: 100 }).notNull(),
   description: text(),
-  status: taskStatus().notNull().default('pending'),
+  status: taskStatus().notNull().default(TaskStatus.PENDING),
   authorId: uuid()
     .notNull()
     .references(() => users.id),
