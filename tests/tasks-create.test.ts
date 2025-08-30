@@ -20,7 +20,7 @@ describe('Tasks POST /tasks API Integration Tests', () => {
     await db.delete(tasks).where(eq(tasks.authorId, userId));
     await db.delete(users).where(eq(users.email, testUser.email));
 
-    // Create user directly in database (faster than HTTP request)
+    // Create new user
     const hashedPassword = await hashPassword(testUser.password);
     const [createdUser] = await db
       .insert(users)
@@ -32,7 +32,7 @@ describe('Tasks POST /tasks API Integration Tests', () => {
 
     userId = createdUser.id;
 
-    // Generate token directly (faster than HTTP request)
+    // Generate token for user
     userToken = await signToken({ sub: userId });
   });
 

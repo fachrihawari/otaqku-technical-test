@@ -20,7 +20,11 @@ export class AuthService {
     const [user] = await db
       .insert(users)
       .values({ email, password: hashedPassword })
-      .returning({ id: users.id, email: users.email, created_at: users.created_at });
+      .returning({
+        id: users.id,
+        email: users.email,
+        created_at: users.created_at,
+      });
 
     return user;
   }

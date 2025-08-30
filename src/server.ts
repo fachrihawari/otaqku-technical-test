@@ -38,4 +38,4 @@ if (shouldListen) {
   });
 }
 
-export { app }
+export { app };

@@ -21,7 +21,7 @@ export async function authMiddleware(
 
   // Verify token
   const user = await AuthService.verify(token);
-  req.user = user
+  req.user = user;
 
   next();
 }

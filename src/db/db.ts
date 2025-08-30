@@ -7,6 +7,6 @@ if (!process.env.DATABASE_URL) {
   );
 }
 
-const dbUrl = process.env.DATABASE_URL + '_' + process.env.NODE_ENV;
+const dbUrl = `${process.env.DATABASE_URL}_${process.env.NODE_ENV}`;
 
 export const db = drizzle(dbUrl, { schema });

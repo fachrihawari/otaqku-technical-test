@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm';
 import { db } from '../db/db';
+import type { TaskBody, TaskStatus } from '../db/schema';
 import { tasks } from '../db/schema';
-import type { TaskStatus, TaskBody } from '../db/schema';
 
 export type TaskAllOptions = {
   page: number;
@@ -37,7 +37,11 @@ export class TaskService {
   }
 
   static async update(id: string, body: Omit<TaskBody, 'authorId'>) {
-    const [task] = await db.update(tasks).set(body).where(eq(tasks.id, id)).returning();
+    const [task] = await db
+      .update(tasks)
+      .set(body)
+      .where(eq(tasks.id, id))
+      .returning();
     return task;
   }
 
@@ -46,6 +50,8 @@ export class TaskService {
   }
 
   static async detail(id: string) {
-    return await db.query.tasks.findFirst({ where: (tasks, { eq }) => eq(tasks.id, id) });
+    return await db.query.tasks.findFirst({
+      where: (tasks, { eq }) => eq(tasks.id, id),
+    });
   }
 }

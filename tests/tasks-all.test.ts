@@ -16,7 +16,7 @@ describe('Tasks GET /tasks API Integration Tests', () => {
   };
 
   beforeEach(async () => {
-    // Create user directly in database (faster than HTTP request)
+    // Create new user
     const hashedPassword = await hashPassword(testUser.password);
     const [createdUser] = await db
       .insert(users)
@@ -28,7 +28,7 @@ describe('Tasks GET /tasks API Integration Tests', () => {
 
     userId = createdUser.id;
 
-    // Generate token directly (faster than HTTP request)
+    // Generate token for user
     userToken = await signToken({ sub: userId });
   });
 
@@ -39,7 +39,7 @@ describe('Tasks GET /tasks API Integration Tests', () => {
   });
 
   it('should get all tasks for authenticated user', async () => {
-    // Create test tasks directly in database (faster than HTTP requests)
+    // Create test tasks
     const testTasks = [
       { title: 'Task 1', description: 'Description 1', status: TaskStatus.PENDING },
       { title: 'Task 2', description: 'Description 2', status: TaskStatus.IN_PROGRESS },
@@ -114,7 +114,7 @@ describe('Tasks GET /tasks API Integration Tests', () => {
   });
 
   it('should handle pagination with page parameter', async () => {
-    // Create multiple tasks directly in database (faster than HTTP requests)
+    // Create multiple tasks
     const taskData = Array.from({ length: 15 }, (_, i) => ({
       title: `Task ${i + 1}`,
       description: `Description ${i + 1}`,
@@ -134,7 +134,7 @@ describe('Tasks GET /tasks API Integration Tests', () => {
   });
 
   it('should handle pagination with limit parameter', async () => {
-    // Create some tasks directly in database (faster than HTTP requests)
+    // Create some tasks
     const taskData = Array.from({ length: 8 }, (_, i) => ({
       title: `Task ${i + 1}`,
       description: `Description ${i + 1}`,
@@ -154,7 +154,7 @@ describe('Tasks GET /tasks API Integration Tests', () => {
   });
 
   it('should filter tasks by status', async () => {
-    // Create tasks with different statuses directly in database
+    // Create tasks with different statuses
     const taskData = [
       { title: 'Pending Task', description: 'Test', status: TaskStatus.PENDING, authorId: userId },
       { title: 'In Progress Task', description: 'Test', status: TaskStatus.IN_PROGRESS, authorId: userId },
