@@ -16,13 +16,12 @@ export const users = pgTable('users', {
 });
 
 export enum TaskStatus {
-    PENDING = "pending",
-    IN_PROGRESS = "in_progress",
-    COMPLETED = "completed",
+  PENDING = 'pending',
+  IN_PROGRESS = 'in_progress',
+  COMPLETED = 'completed',
 }
 
 export const taskStatus = pgEnum('task_status', TaskStatus);
-
 
 export const tasks = pgTable('tasks', {
   id: uuid().primaryKey().defaultRandom(),

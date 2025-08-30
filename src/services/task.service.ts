@@ -1,5 +1,5 @@
 import { db } from '../db/db';
-import { TaskStatus } from '../db/schema';
+import type { TaskStatus } from '../db/schema';
 
 export type TaskAllOptions = {
   page: number;
@@ -9,10 +9,11 @@ export type TaskAllOptions = {
 export class TaskService {
   static async all(authorId: string, options: TaskAllOptions) {
     const tasks = await db.query.tasks.findMany({
-      where: (tasks, { eq, and }) => and(
-        eq(tasks.authorId, authorId),
-        options.status ? eq(tasks.status, options.status) : undefined,
-      ),
+      where: (tasks, { eq, and }) =>
+        and(
+          eq(tasks.authorId, authorId),
+          options.status ? eq(tasks.status, options.status) : undefined,
+        ),
       with: {
         author: {
           columns: {
