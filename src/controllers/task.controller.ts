@@ -2,7 +2,6 @@ import type { Request, Response } from 'express';
 import z from 'zod';
 import { TaskStatus } from '../db/schema';
 import { TaskService } from '../services/task.service';
-import { notFound } from '../helpers/error';
 
 const tasksAllQuerySchema = z.object({
   page: z.coerce.number().min(1).default(1),
@@ -11,9 +10,20 @@ const tasksAllQuerySchema = z.object({
 });
 
 const taskBodySchema = z.object({
-  title: z.string().min(3).max(100),
-  description: z.string().max(500),
-  status: z.enum(TaskStatus).default(TaskStatus.PENDING),
+  title: z
+    .string('Title is required')
+    .min(3, 'Title must be at least 3 characters long')
+    .max(100, 'Title must be at most 100 characters long'),
+  description: z
+    .string()
+    .max(500, 'Description must be at most 500 characters long')
+    .optional(),
+  status: z
+    .enum(
+      TaskStatus,
+      `Status must be one of: ${Object.values(TaskStatus).join(', ')}`,
+    )
+    .default(TaskStatus.PENDING),
 });
 
 export class TaskController {
@@ -60,6 +70,6 @@ export class TaskController {
     // Delete task using the service
     await TaskService.delete(req.task.id);
 
-    res.status(200).json({ message: "Task deleted successfully" });
+    res.status(200).json({ message: 'Task deleted successfully' });
   }
 }

@@ -28,7 +28,14 @@ app.use('/tasks', taskRoutes);
 // Error Middlewares
 app.use(errorMiddleware);
 
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
-  console.log(`API Docs is running on http://localhost:${port}/api-docs`);
-});
+// Start the server
+const shouldListen = process.env.NODE_ENV !== 'test';
+
+if (shouldListen) {
+  app.listen(port, () => {
+    console.log(`Server is running on http://localhost:${port}`);
+    console.log(`API Docs is running on http://localhost:${port}/api-docs`);
+  });
+}
+
+export { app };

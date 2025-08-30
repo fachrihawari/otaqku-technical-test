@@ -1,0 +1,166 @@
+import { beforeEach, describe, expect, it, afterEach } from "vitest";
+import supertest from 'supertest'
+import { app } from '../src/server'
+import { db } from "../src/db/db";
+import { users, tasks, TaskStatus } from "../src/db/schema";
+import { eq } from "drizzle-orm";
+import { hashPassword } from "../src/helpers/hash";
+import { signToken } from "../src/helpers/jwt";
+
+describe('Tasks GET /tasks/:id API Integration Tests', () => {
+  let userToken: string;
+  let userId: string;
+  let anotherUserId: string;
+  let taskId: string;
+  let anotherUserTaskId: string;
+  
+  const testUser = {
+    email: 'detail-task-user@mail.com',
+    password: 'password123'
+  };
+
+  const anotherTestUser = {
+    email: 'another-detail-task-user@mail.com',
+    password: 'password456'
+  };
+
+  beforeEach(async () => {
+    // Clean up existing data
+    await db.delete(tasks).where(eq(tasks.authorId, userId));
+    await db.delete(tasks).where(eq(tasks.authorId, anotherUserId));
+    await db.delete(users).where(eq(users.email, testUser.email));
+    await db.delete(users).where(eq(users.email, anotherTestUser.email));
+
+    // Create main test user
+    const hashedPassword = await hashPassword(testUser.password);
+    const [createdUser] = await db
+      .insert(users)
+      .values({
+        email: testUser.email,
+        password: hashedPassword
+      })
+      .returning({ id: users.id, email: users.email });
+
+    userId = createdUser.id;
+    userToken = await signToken({ sub: userId });
+
+    // Create another user for authorization tests
+    const anotherHashedPassword = await hashPassword(anotherTestUser.password);
+    const [anotherCreatedUser] = await db
+      .insert(users)
+      .values({
+        email: anotherTestUser.email,
+        password: anotherHashedPassword
+      })
+      .returning({ id: users.id, email: users.email });
+
+    anotherUserId = anotherCreatedUser.id;
+
+    // Create a test task for the main user
+    const [createdTask] = await db
+      .insert(tasks)
+      .values({
+        title: 'Sample Task Detail',
+        description: 'This is a sample task for detail testing',
+        status: TaskStatus.PENDING,
+        authorId: userId
+      })
+      .returning({ id: tasks.id });
+
+    taskId = createdTask.id;
+
+    // Create a test task for another user (for forbidden tests)
+    const [anotherCreatedTask] = await db
+      .insert(tasks)
+      .values({
+        title: 'Another User Task',
+        description: 'Task belonging to another user',
+        status: TaskStatus.IN_PROGRESS,
+        authorId: anotherUserId
+      })
+      .returning({ id: tasks.id });
+
+    anotherUserTaskId = anotherCreatedTask.id;
+  });
+
+  afterEach(async () => {
+    // Clean up test data
+    if (userId) {
+      await db.delete(tasks).where(eq(tasks.authorId, userId));
+      await db.delete(users).where(eq(users.id, userId));
+    }
+    if (anotherUserId) {
+      await db.delete(tasks).where(eq(tasks.authorId, anotherUserId));
+      await db.delete(users).where(eq(users.id, anotherUserId));
+    }
+  });
+
+  it('should successfully get task detail owned by the user', async () => {
+    const response = await supertest(app)
+      .get(`/tasks/${taskId}`)
+      .set('Authorization', `Bearer ${userToken}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toBeInstanceOf(Object);
+
+    expect(response.body).toHaveProperty('id', taskId);
+    expect(response.body).toHaveProperty('title', 'Sample Task Detail');
+    expect(response.body).toHaveProperty('description', 'This is a sample task for detail testing');
+    expect(response.body).toHaveProperty('status', TaskStatus.PENDING);
+    expect(response.body).toHaveProperty('authorId', userId);
+    expect(response.body).toHaveProperty('created_at', expect.any(String));
+    expect(response.body).toHaveProperty('updated_at', expect.any(String));
+  });
+
+  it('should return 401 when no authorization token provided', async () => {
+    const response = await supertest(app)
+      .get(`/tasks/${taskId}`);
+
+    expect(response.status).toBe(401);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty('message', 'Invalid token');
+  });
+
+  it('should return 401 when invalid authorization token provided', async () => {
+    const response = await supertest(app)
+      .get(`/tasks/${taskId}`)
+      .set('Authorization', 'Bearer invalid-token');
+
+    expect(response.status).toBe(401);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty('message', 'Invalid token');
+  });
+
+  it('should return 401 when malformed authorization header', async () => {
+    const response = await supertest(app)
+      .get(`/tasks/${taskId}`)
+      .set('Authorization', 'InvalidFormat');
+
+    expect(response.status).toBe(401);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty('message', 'Invalid token');
+  });
+
+  it('should return 403 when trying to get another user\'s task', async () => {
+    const response = await supertest(app)
+      .get(`/tasks/${anotherUserTaskId}`)
+      .set('Authorization', `Bearer ${userToken}`);
+
+    expect(response.status).toBe(403);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty('message', "You're not allowed to access this resource");
+  });
+
+  it('should return 404 when task does not exist', async () => {
+    const nonExistentTaskId = '550e8400-e29b-41d4-a716-446655440000';
+
+    const response = await supertest(app)
+      .get(`/tasks/${nonExistentTaskId}`)
+      .set('Authorization', `Bearer ${userToken}`);
+
+    expect(response.status).toBe(404);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty('message', 'Task not found');
+  });
+
+});

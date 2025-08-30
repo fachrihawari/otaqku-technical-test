@@ -7,4 +7,6 @@ if (!process.env.DATABASE_URL) {
   );
 }
 
-export const db = drizzle(process.env.DATABASE_URL, { schema });
+const dbUrl = `${process.env.DATABASE_URL}_${process.env.NODE_ENV}`;
+
+export const db = drizzle(dbUrl, { schema });

@@ -5,8 +5,8 @@ import type { Task, User } from './db/schema';
 declare global {
   namespace Express {
     interface Request {
-      user: User
-      task: Task
+      user: User;
+      task: Task;
     }
   }
 }

@@ -175,6 +175,10 @@ paths:
                     type: string
                     format: email
                     example: "user@mail.com"
+                  created_at:
+                    type: string
+                    format: date-time
+                    example: "2023-01-01T00:00:00Z"
         422:
           description: Unprocessable Entity
           content:

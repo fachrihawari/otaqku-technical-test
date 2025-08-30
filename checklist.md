@@ -48,18 +48,17 @@
 - [x] Global error handling middleware
 
 ## 🧪 Testing
-- [ ] Authentication tests
-- [ ] Task CRUD tests
-- [ ] Error handling tests
-- [ ] Authorization tests (user isolation)
+- [x] Authentication tests
+- [x] Task CRUD tests
+- [x] Error handling tests
+- [x] Authorization tests (user isolation)
 
 ## 🎯 Bonus Features (Optional)
 - [x] Task filtering (by status, date, etc.)
 - [x] Pagination in task listing
 - [ ] Bulk update endpoint
 - [x] API documentation (Swagger/OpenAPI)
-- [ ] Unit tests
-- [ ] Integration tests
+- [x] Integration tests
 
 ## 📚 Documentation & Deployment
 - [ ] README.md with setup instructions
