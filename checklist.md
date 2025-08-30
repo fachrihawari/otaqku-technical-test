@@ -22,7 +22,7 @@
   - [x] status (enum: pending/in-progress/completed)
   - [x] createdAt (timestamp)
   - [x] updatedAt (timestamp)
-  - [x] userId (foreign key, for user isolation)
+  - [x] authorId (foreign key, for user isolation)
 - [x] Database instance setup
 - [x] Environment configuration
 
@@ -61,16 +61,12 @@
 - [x] Integration tests
 
 ## 📚 Documentation & Deployment
-- [ ] README.md with setup instructions
-- [ ] Docker setup (optional)
-- [ ] Database setup instructions
-- [ ] Environment variables documentation
+- [x] README.md with setup instructions
+- [x] Docker setup (optional)
+- [x] Database setup instructions
+- [x] Environment variables documentation
 
 ## ✅ Final Checks
-- [ ] Code quality and cleanliness
-- [x] Proper error handling
-- [ ] Security best practices
-- [ ] Performance considerations
-- [ ] Documentation completeness
 - [ ] Local development setup works
+- [ ] Production environment setup works
 - [ ] All endpoints tested manually
