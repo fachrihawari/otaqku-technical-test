@@ -36,7 +36,7 @@ const authRoutes = express.Router();
  *               example: "2023-01-01T00:00:00Z"
  */
 
- /**
+/**
  * @swagger
  * /auth/register:
  *   post:
