@@ -15,7 +15,7 @@ describe('Auth Register API Integration Tests', () => {
     const response = await supertest(app)
       .post('/auth/register')
       .send({
-        email: 'test@example.com',
+        email: 'auth-register-test@mail.com',
         password: 'password',
       });
 
@@ -23,7 +23,7 @@ describe('Auth Register API Integration Tests', () => {
     expect(response.body).toBeInstanceOf(Object)
 
     expect(response.body).toHaveProperty('id', expect.any(String));
-    expect(response.body).toHaveProperty('email', 'test@example.com');
+    expect(response.body).toHaveProperty('email', 'auth-register-test@mail.com');
     expect(response.body).toHaveProperty('created_at', expect.any(String));
   });
 
@@ -31,7 +31,7 @@ describe('Auth Register API Integration Tests', () => {
     const response = await supertest(app)
       .post('/auth/register')
       .send({
-        email: 'test@example.com',
+        email: 'auth-register-test@mail.com',
         password: 'password',
       });
 
@@ -60,7 +60,7 @@ describe('Auth Register API Integration Tests', () => {
     const response = await supertest(app)
       .post('/auth/register')
       .send({
-        email: 'test@example.com',
+        email: 'auth-register-test@mail.com',
         password: 'weak',
       });
 

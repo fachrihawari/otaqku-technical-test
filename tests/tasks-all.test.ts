@@ -11,7 +11,7 @@ describe('Tasks GET /tasks API Integration Tests', () => {
   let userToken: string;
   let userId: string;
   const testUser = {
-    email: 'tasks-all@mail.com',
+    email: 'tasks-all-test@mail.com',
     password: 'password'
   };
 
@@ -178,9 +178,9 @@ describe('Tasks GET /tasks API Integration Tests', () => {
   });
 
   it('should only return tasks belonging to authenticated user', async () => {
-    // Create another user directly in database (faster than HTTP requests)
+    // Create another user directly in database
     const anotherUser = {
-      email: 'anotheruser@example.com',
+      email: 'tasks-all-test-another@mail.com',
       password: 'password'
     };
 

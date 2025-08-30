@@ -12,7 +12,7 @@ describe('Auth Login API Integration Tests', () => {
     await reset(db, { users })
 
     await db.insert(users).values({
-      email: 'test@mail.com',
+      email: 'auth-login-test@mail.com',
       password: await hashPassword('password'),
     })
 
@@ -22,7 +22,7 @@ describe('Auth Login API Integration Tests', () => {
     const response = await supertest(app)
       .post('/auth/login')
       .send({
-        email: 'test@mail.com',
+        email: 'auth-login-test@mail.com',
         password: 'password',
       });
 
@@ -52,7 +52,7 @@ describe('Auth Login API Integration Tests', () => {
     const response = await supertest(app)
       .post('/auth/login')
       .send({
-        email: 'test@mail.com',
+        email: 'auth-login-test@mail.com',
         password: 'pass',
       });
 
@@ -68,7 +68,7 @@ describe('Auth Login API Integration Tests', () => {
     const response = await supertest(app)
       .post('/auth/login')
       .send({
-        email: 'test@mail.com',
+        email: 'auth-login-test@mail.com',
         password: 'wrong-password',
       });
 
