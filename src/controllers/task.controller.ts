@@ -18,16 +18,20 @@ const taskBodySchema = z.object({
 
 export class TaskController {
   static async all(req: Request, res: Response) {
+    // Validate and parse query parameters
     const { page, limit, status } = tasksAllQuerySchema.parse(req.query);
 
+    // Fetch tasks from the service
     const tasks = await TaskService.all(req.user.id, { page, limit, status });
 
     res.status(200).json(tasks);
   }
 
   static async create(req: Request, res: Response) {
+    // Validate and parse request body
     const body = taskBodySchema.parse(req.body);
 
+    // Create task using the service
     const task = await TaskService.create({
       title: body.title,
       description: body.description,
@@ -39,13 +43,15 @@ export class TaskController {
   }
 
   static async detail(req: Request, res: Response) {
-    const taskId = req.params.id;
+    res.status(200).json(req.task);
+  }
 
-    const task = await TaskService.detail(taskId);
+  static async update(req: Request, res: Response) {
+    // Validate and parse request body
+    const body = taskBodySchema.parse(req.body);
 
-    if (!task) {
-      throw notFound("Task not found");
-    }
+    // Update task using the service
+    const task = await TaskService.update(req.task.id, body);
 
     res.status(200).json(task);
   }

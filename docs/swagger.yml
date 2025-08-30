@@ -383,3 +383,65 @@ paths:
           $ref: '#/components/responses/NotFoundError'
         500:
           $ref: '#/components/responses/InternalServerError'
+
+    put:
+      description: Update an existing task
+      tags: [Tasks]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TaskBody"
+              required:
+                - title
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+        422:
+          description: "Unprocessable Entity"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Validation failed"
+                  details:
+                    type: object
+                    properties:
+                      title:
+                        type: array
+                        items:
+                          type: string
+                        example: ["Title is required"]
+                      description:
+                        type: array
+                        items:
+                          type: string
+                        example: ["Description is required"]
+                      status:
+                        type: array
+                        items:
+                          type: string
+                        example: ["Status is required"]
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/ForbiddenError'
+        404:
+          $ref: '#/components/responses/NotFoundError'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+

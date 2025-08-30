@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { TaskService } from "../services/task.service";
 import { forbidden, notFound } from "../helpers/error";
 
-export async function ownerOnly(req: Request, res: Response, next: NextFunction) {
+export async function ownerOnly(req: Request, _res: Response, next: NextFunction) {
   const userId = req.user.id;
   const taskId = req.params.id;
 
@@ -14,6 +14,8 @@ export async function ownerOnly(req: Request, res: Response, next: NextFunction)
   if (task.authorId !== userId) {
     throw forbidden("You're not allowed to access this resource")
   }
+
+  req.task = task
 
   next();
 }

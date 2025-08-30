@@ -1,5 +1,7 @@
+import { eq } from 'drizzle-orm';
 import { db } from '../db/db';
-import { tasks, type TaskStatus } from '../db/schema';
+import { tasks } from '../db/schema';
+import type { TaskStatus, TaskBody } from '../db/schema';
 
 export type TaskAllOptions = {
   page: number;
@@ -7,12 +9,6 @@ export type TaskAllOptions = {
   status?: TaskStatus;
 };
 
-type TaskBody = {
-  title: string;
-  description: string;
-  status: TaskStatus;
-  authorId: string;
-};
 export class TaskService {
   static async all(authorId: string, options: TaskAllOptions) {
     const tasks = await db.query.tasks.findMany({
@@ -37,6 +33,11 @@ export class TaskService {
 
   static async create(body: TaskBody) {
     const [task] = await db.insert(tasks).values(body).returning();
+    return task;
+  }
+
+  static async update(id: string, body: Omit<TaskBody, 'authorId'>) {
+    const [task] = await db.update(tasks).set(body).where(eq(tasks.id, id)).returning();
     return task;
   }
 

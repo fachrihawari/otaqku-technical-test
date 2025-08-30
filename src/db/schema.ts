@@ -15,6 +15,8 @@ export const users = pgTable('users', {
   created_at: timestamp().notNull().defaultNow(),
 });
 
+export type User = typeof users.$inferSelect;
+
 export enum TaskStatus {
   PENDING = 'pending',
   IN_PROGRESS = 'in_progress',
@@ -44,3 +46,6 @@ export const tasksRelations = relations(tasks, ({ one }) => ({
     references: [users.id],
   }),
 }));
+
+export type Task = typeof tasks.$inferSelect;
+export type TaskBody = typeof tasks.$inferInsert;
