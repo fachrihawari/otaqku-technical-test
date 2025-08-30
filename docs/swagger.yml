@@ -23,9 +23,7 @@ components:
           type: string
           minLength: 6
           example: "password123"
-      required:
-        - email
-        - password
+
     User:
       allOf:
         - $ref: "#/components/schemas/AuthBody"
@@ -39,6 +37,47 @@ components:
               type: string
               format: date-time
               example: "2023-01-01T00:00:00Z"
+    TaskBody:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Sample Task"
+        description:
+          type: string
+          example: "This is a sample task description."
+        status:
+          type: enum
+          example: "in_progress"
+          enum:
+            - "pending"
+            - "in_progress"
+            - "completed"
+    Task:
+      allOf:
+        - $ref: "#/components/schemas/TaskBody"
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+              example: "43101af4-2b31-445e-a406-7393ea66a3bb"
+            authorId:
+              type: string
+              format: uuid
+              example: "43101af4-2b31-445e-a406-7393ea66a3bb"
+            author:
+              $ref: "#/components/schemas/User"
+            created_at:
+              type: string
+              format: date-time
+              example: "2023-01-01T00:00:00Z"
+            updated_at:
+              type: string
+              format: date-time
+              example: "2023-01-01T00:00:00Z"
+
+
   securitySchemes:
     bearerAuth: # arbitrary name for the security scheme
       type: http
@@ -115,6 +154,9 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/AuthBody"
+              required:
+                - email
+                - password
       responses:
         201:
           description: Success
@@ -176,6 +218,9 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/AuthBody"
+              required:
+                - email
+                - password
       responses:
         200:
           description: Success
@@ -222,3 +267,29 @@ paths:
                     example: "Invalid email or password"
         500:
           $ref: '#/components/responses/InternalServerError'
+
+  /tasks:
+    get:
+      description: Get all tasks
+      tags: [Tasks]
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Task"
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal server error"

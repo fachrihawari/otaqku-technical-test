@@ -7,6 +7,7 @@ import { errorMiddleware } from './middlewares/error.middleware';
 import { loggerMiddleware } from './middlewares/logger.middleware';
 import { authRoutes } from './routes/auth.route';
 import { publicRoutes } from './routes/public.route';
+import { taskRoutes } from './routes/task.route';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -22,10 +23,7 @@ app.use('/auth', authRoutes);
 
 // Protected Routes
 app.use(authMiddleware);
-app.get('/try', (req, res) => {
-  console.log(req.user); // Should log the authenticated user's info
-  res.send('This is a protected route');
-});
+app.use('/tasks', taskRoutes);
 
 // Error Middlewares
 app.use(errorMiddleware);
