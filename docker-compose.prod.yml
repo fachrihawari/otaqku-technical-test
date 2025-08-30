@@ -1,0 +1,36 @@
+services:
+  app-prod:
+    build:
+      context: .
+      target: production
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgres://postgres:${POSTGRES_PASSWORD:-postgres}@db-prod:5432/otaqku
+      - JWT_SECRET=${JWT_SECRET:-your-super-secret-jwt-key}
+    restart: unless-stopped
+    depends_on:
+      db-prod:
+        condition: service_healthy
+
+  db-prod:
+    image: postgres:15.14-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - POSTGRES_DB=otaqku_production
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-prod-data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d otaqku_production"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  db-prod-data:
