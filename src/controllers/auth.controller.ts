@@ -16,7 +16,7 @@ export class AuthController {
 
     // Process registration
     const user = await AuthService.register(email, password);
-    
+
     res.status(201).json(user);
   }
 
@@ -26,7 +26,7 @@ export class AuthController {
 
     // Process login
     const result = await AuthService.login(email, password);
-    
+
     res.json(result);
   }
 }

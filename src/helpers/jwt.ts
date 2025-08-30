@@ -1,4 +1,4 @@
-import { jwtVerify, SignJWT } from 'jose';
+import { type JWTPayload, jwtVerify, SignJWT } from 'jose';
 
 if (!process.env.JWT_SECRET) {
   throw new Error(
@@ -8,16 +8,17 @@ if (!process.env.JWT_SECRET) {
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 const alg = 'HS256';
+const expiration = '7d';
 
-export async function signToken(payload: { id: string }) {
+export async function signToken(payload: JWTPayload) {
   return await new SignJWT(payload)
     .setProtectedHeader({ alg })
     .setIssuedAt()
-    .setExpirationTime('7d')
+    .setExpirationTime(expiration)
     .sign(secret);
 }
 
-export async function verifyToken<T>(token: string) {
-  const { payload } = await jwtVerify<T>(token, secret);
+export async function verifyToken(token: string) {
+  const { payload } = await jwtVerify(token, secret);
   return payload;
 }

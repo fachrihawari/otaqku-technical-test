@@ -3,7 +3,7 @@ import { db } from '../db/db';
 import { usersTable } from '../db/schema';
 import { conflict, unauthorized } from '../helpers/error';
 import { hashPassword, verifyPassword } from '../helpers/hash';
-import { signToken } from '../helpers/jwt';
+import { signToken, verifyToken } from '../helpers/jwt';
 
 export class AuthService {
   static async register(email: string, password: string) {
@@ -47,14 +47,33 @@ export class AuthService {
     }
 
     // Generate token
-    const accessToken = await signToken({ id: user.id });
+    const accessToken = await signToken({ sub: user.id });
 
     return {
       accessToken,
       user: {
         id: user.id,
-        email: user.email
-      }
+        email: user.email,
+      },
     };
+  }
+
+  static async verify(token: string) {
+    // Verify jwt token
+    const payload = await verifyToken(token);
+    if (!payload.sub) {
+      throw unauthorized('Invalid token');
+    }
+
+    // Check if user exists
+    const [user] = await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.id, payload.sub));
+    if (!user) {
+      throw unauthorized('Invalid token');
+    }
+
+    return user;
   }
 }
