@@ -88,7 +88,6 @@ const authRoutes = express.Router();
  */
 authRoutes.post('/register', AuthController.register);
 
-
 /**
  * @swagger
  * /auth/login:

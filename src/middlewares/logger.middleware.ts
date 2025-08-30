@@ -19,7 +19,9 @@ const createPrettyTransport = () =>
   });
 
 const transport =
-  process.env.NODE_ENV === 'production' ? createFileTransport() : createPrettyTransport();
+  process.env.NODE_ENV === 'production'
+    ? createFileTransport()
+    : createPrettyTransport();
 
 export const loggerMiddleware = pinoHttp({
   enabled: process.env.NODE_ENV !== 'test',

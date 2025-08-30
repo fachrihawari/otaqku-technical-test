@@ -1,7 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 import z, { ZodError } from 'zod';
 import { ErrorCode, HttpError } from '../helpers/error';
-import { DrizzleQueryError } from 'drizzle-orm';
 
 export function errorMiddleware(
   err: unknown,
