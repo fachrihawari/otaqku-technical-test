@@ -1,0 +1,38 @@
+services:
+  app-dev:
+    build:
+      context: .
+      target: development
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules  # Prevent overriding node_modules
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgres://postgres:postgres@db-dev:5432/otaqku
+      - JWT_SECRET=secret
+    restart: unless-stopped
+    depends_on:
+      db-dev:
+        condition: service_healthy
+
+  db-dev:
+    image: postgres:15.14-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=otaqku_development
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-dev-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d otaqku_development"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+volumes:
+  db-dev-data:

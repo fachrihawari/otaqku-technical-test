@@ -1,0 +1,480 @@
+openapi: 3.0.0
+info:
+  title: otaQku Tasks API
+  version: 1.0.0
+  description: Backend Engineer Technical Test
+
+servers:
+  - url: http://localhost:3000
+    description: Development server
+  - url: https://otaqku-api.hawari.dev
+    description: Production server
+
+security:
+  - bearerAuth: []
+
+components:
+  schemas:
+    AuthBody:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: "user@mail.com"
+        password:
+          type: string
+          minLength: 6
+          example: "secret"
+    User:
+      allOf:
+        - $ref: "#/components/schemas/AuthBody"
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+              example: "43101af4-2b31-445e-a406-7393ea66a3bb"
+            created_at:
+              type: string
+              format: date-time
+              example: "2023-01-01T00:00:00Z"
+    TaskBody:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Sample Task"
+        description:
+          type: string
+          example: "This is a sample task description."
+        status:
+          type: enum
+          example: "in_progress"
+          default: "pending"
+          enum:
+            - "pending"
+            - "in_progress"
+            - "completed"
+    Task:
+      allOf:
+        - $ref: "#/components/schemas/TaskBody"
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+              example: "43101af4-2b31-445e-a406-7393ea66a3bb"
+            authorId:
+              type: string
+              format: uuid
+              example: "43101af4-2b31-445e-a406-7393ea66a3bb"
+            author:
+              $ref: "#/components/schemas/User"
+            created_at:
+              type: string
+              format: date-time
+              example: "2023-01-01T00:00:00Z"
+            updated_at:
+              type: string
+              format: date-time
+              example: "2023-01-01T00:00:00Z"
+
+  securitySchemes:
+    bearerAuth: # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT # optional, arbitrary value for documentation purposes
+
+  responses:
+    UnauthorizedError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Invalid token"
+    ForbiddenError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "You're not allowed to access this resource"
+    NotFoundError:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Resource not found"
+    InternalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Internal Server Error"
+
+paths:
+  /:
+    get:
+      description: Public home endpoint
+      tags: [Public]
+      responses:
+        200:
+          description: Returns welcome message.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Welcome to otaQku tasks management API
+        500:
+          $ref: '#/components/responses/InternalServerError'
+
+  /auth/register:
+    post:
+      description: Register a new user account
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthBody"
+              required:
+                - email
+                - password
+      responses:
+        201:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: "43101af4-2b31-445e-a406-7393ea66a3bb"
+                  email:
+                    type: string
+                    format: email
+                    example: "user@mail.com"
+                  created_at:
+                    type: string
+                    format: date-time
+                    example: "2023-01-01T00:00:00Z"
+        422:
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Validation failed"
+                  details:
+                    type: object
+                    properties:
+                      email:
+                        type: array
+                        items:
+                          type: string
+                        example: ["Invalid email format"]
+                      password:
+                        type: array
+                        items:
+                          type: string
+                        example: ["Password must be at least 6 characters long"]
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Email already exists"
+        500:
+          $ref: '#/components/responses/InternalServerError'
+
+  /auth/login:
+    post:
+      description: Login an existing user
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthBody"
+              required:
+                - email
+                - password
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        422:
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Validation failed"
+                  details:
+                    type: object
+                    properties:
+                      email:
+                        type: array
+                        items:
+                          type: string
+                        example: ["Invalid email format"]
+                      password:
+                        type: array
+                        items:
+                          type: string
+                        example: ["Password must be at least 6 characters long"]
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid email or password"
+        500:
+          $ref: '#/components/responses/InternalServerError'
+
+  /tasks:
+    get:
+      description: Get all tasks
+      tags: [Tasks]
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+        - in: query
+          name: status
+          schema:
+            type: enum
+            enum: [pending, in_progress, completed]
+                
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Task"
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      description: Create a new task
+      tags: [Tasks]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TaskBody"
+              required:
+                - title
+      responses:
+        201:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+        422:
+          description: "Unprocessable Entity"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Validation failed"
+                  details:
+                    type: object
+                    properties:
+                      title:
+                        type: array
+                        items:
+                          type: string
+                        example: ["Title is required"]
+                      description:
+                        type: array
+                        items:
+                          type: string
+                        example: ["Description is required"]
+                      status:
+                        type: array
+                        items:
+                          type: string
+                        example: ["Status is required"]
+        500:
+          $ref: '#/components/responses/InternalServerError'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+
+
+  /tasks/:id:
+    get:
+      description: Get task by ID
+      tags: [Tasks]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/ForbiddenError'
+        404:
+          $ref: '#/components/responses/NotFoundError'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+
+    put:
+      description: Update an existing task
+      tags: [Tasks]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TaskBody"
+              required:
+                - title
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+        422:
+          description: "Unprocessable Entity"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Validation failed"
+                  details:
+                    type: object
+                    properties:
+                      title:
+                        type: array
+                        items:
+                          type: string
+                        example: ["Title is required"]
+                      description:
+                        type: array
+                        items:
+                          type: string
+                        example: ["Description is required"]
+                      status:
+                        type: array
+                        items:
+                          type: string
+                        example: ["Status is required"]
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/ForbiddenError'
+        404:
+          $ref: '#/components/responses/NotFoundError'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      description: Delete an existing task
+      tags: [Tasks]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Task deleted successfully"
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/ForbiddenError'
+        404:
+          $ref: '#/components/responses/NotFoundError'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+

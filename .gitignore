@@ -1,0 +1,14 @@
+# build output
+dist
+
+# deps
+node_modules
+
+# env
+.env
+
+# tmp files
+*.log
+
+# vitest coverage
+coverage

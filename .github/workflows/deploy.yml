@@ -1,0 +1,18 @@
+name: Deploy Project
+
+on:
+  push:
+    branches:
+      - main  # Trigger the workflow on push to main branch
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Pull & Redeploy
+        run: |
+          cd /root/apps/otaqku-technical-test
+          git restore .
+          git pull origin main
+          docker compose -f docker-compose.prod.yml -f docker-compose.tunnel.yml down
+          docker compose -f docker-compose.prod.yml -f docker-compose.tunnel.yml up --build -d
