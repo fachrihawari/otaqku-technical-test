@@ -31,15 +31,15 @@
 - [x] User login endpoint (POST /auth/login)
 - [x] Email + password validation
 - [x] JWT token generation and verification
-- [ ] Authentication middleware
-- [ ] User isolation (users can only access their own data)
+- [x] Authentication middleware
+- [x] User isolation (users can only access their own data)
 
 ## 📋 Task Management API
-- [ ] POST /tasks → Create a new task
-- [ ] GET /tasks → List all tasks for authenticated user
-- [ ] GET /tasks/:id → Retrieve a single task
-- [ ] PUT /tasks/:id → Update a task
-- [ ] DELETE /tasks/:id → Delete a task
+- [x] POST /tasks → Create a new task
+- [x] GET /tasks → List all tasks for authenticated user
+- [x] GET /tasks/:id → Retrieve a single task
+- [x] PUT /tasks/:id → Update a task
+- [x] DELETE /tasks/:id → Delete a task
 
 ## ⚠️ Error Handling
 - [x] Appropriate HTTP status codes
@@ -54,8 +54,8 @@
 - [ ] Authorization tests (user isolation)
 
 ## 🎯 Bonus Features (Optional)
-- [ ] Task filtering (by status, date, etc.)
-- [ ] Pagination in task listing
+- [x] Task filtering (by status, date, etc.)
+- [x] Pagination in task listing
 - [ ] Bulk update endpoint
 - [x] API documentation (Swagger/OpenAPI)
 - [ ] Unit tests

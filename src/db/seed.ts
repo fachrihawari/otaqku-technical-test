@@ -1,45 +1,36 @@
 import 'dotenv/config';
 
+import { reset, seed } from 'drizzle-seed';
 import { hashPassword } from '../helpers/hash';
 import { db } from './db';
-import { tasksTable, usersTable } from './schema';
+import { tasks, users } from './schema';
 
-async function seed() {
-  console.log('🕐 Resetting database...');
-  await db.delete(tasksTable).execute();
-  await db.delete(usersTable).execute();
-  console.log('✅ Database reset successfully');
+async function main() {
+  console.log('🕐 Re-seeding database...');
+  await reset(db, { tasks, users });
 
   const password = await hashPassword('secret');
+  const [defaultUser] = await db
+    .insert(users)
+    .values({
+      email: 'user@mail.com',
+      password,
+    })
+    .returning({ id: users.id });
 
-  console.log('🕐 Inserting users');
-  const results = await db
-    .insert(usersTable)
-    .values([
-      { email: 'jhon@mail.com', password },
-      { email: 'jane@mail.com', password },
-    ])
-    .returning({ insertedId: usersTable.id });
-  console.log('✅ Users successfully inserted');
-
-  console.log('🕐 Inserting tasks');
-  await db.insert(tasksTable).values([
-    {
-      title: 'Task 1',
-      description: 'Description for Task 1',
-      status: 'pending',
-      authorId: results[0].insertedId,
+  await seed(db, { tasks }).refine((f) => ({
+    tasks: {
+      count: 35,
+      columns: {
+        title: f.jobTitle(),
+        description: f.loremIpsum({ sentencesCount: 1 }),
+        authorId: f.default({ defaultValue: defaultUser.id }),
+      },
     },
-    {
-      title: 'Task 2',
-      description: 'Description for Task 2',
-      status: 'in_progress',
-      authorId: results[1].insertedId,
-    },
-  ]);
-  console.log('✅ Tasks successfully inserted');
+  }));
+  console.log('✅ Database seeded successfully');
 
   process.exit(0);
 }
 
-seed().catch(console.error);
+main().catch(console.error);

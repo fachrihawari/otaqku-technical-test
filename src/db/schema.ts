@@ -1,3 +1,4 @@
+import { relations } from 'drizzle-orm';
 import {
   pgEnum,
   pgTable,
@@ -7,30 +8,44 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core';
 
-export const usersTable = pgTable('users', {
+export const users = pgTable('users', {
   id: uuid().primaryKey().defaultRandom(),
   email: varchar({ length: 255 }).notNull().unique(),
   password: varchar({ length: 255 }).notNull(),
   created_at: timestamp().notNull().defaultNow(),
 });
 
-export const taskStatusEnum = pgEnum('task_status', [
-  'pending',
-  'in_progress',
-  'completed',
-]);
+export type User = typeof users.$inferSelect;
 
-export const tasksTable = pgTable('tasks', {
+export enum TaskStatus {
+  PENDING = 'pending',
+  IN_PROGRESS = 'in_progress',
+  COMPLETED = 'completed',
+}
+
+export const taskStatus = pgEnum('task_status', TaskStatus);
+
+export const tasks = pgTable('tasks', {
   id: uuid().primaryKey().defaultRandom(),
   title: varchar({ length: 100 }).notNull(),
   description: text(),
-  status: taskStatusEnum().notNull().default('pending'),
+  status: taskStatus().notNull().default(TaskStatus.PENDING),
   authorId: uuid()
     .notNull()
-    .references(() => usersTable.id),
+    .references(() => users.id),
   created_at: timestamp().notNull().defaultNow(),
   updated_at: timestamp()
     .notNull()
     .defaultNow()
     .$onUpdateFn(() => new Date()),
 });
+
+export const tasksRelations = relations(tasks, ({ one }) => ({
+  author: one(users, {
+    fields: [tasks.authorId],
+    references: [users.id],
+  }),
+}));
+
+export type Task = typeof tasks.$inferSelect;
+export type TaskBody = typeof tasks.$inferInsert;

@@ -1,6 +1,5 @@
-import { eq } from 'drizzle-orm';
 import { db } from '../db/db';
-import { usersTable } from '../db/schema';
+import { users } from '../db/schema';
 import { conflict, unauthorized } from '../helpers/error';
 import { hashPassword, verifyPassword } from '../helpers/hash';
 import { signToken, verifyToken } from '../helpers/jwt';
@@ -8,33 +7,29 @@ import { signToken, verifyToken } from '../helpers/jwt';
 export class AuthService {
   static async register(email: string, password: string) {
     // Check if user already exists
-    const existingUser = await db
-      .select()
-      .from(usersTable)
-      .where(eq(usersTable.email, email));
+    const existingUser = await db.query.users.findFirst({
+      where: (users, { eq }) => eq(users.email, email),
+    });
 
-    if (existingUser.length > 0) {
+    if (existingUser) {
       throw conflict('Email already exists');
     }
 
     // Create new user
-    const [user] = await db
-      .insert(usersTable)
-      .values({
-        email,
-        password: await hashPassword(password),
-      })
-      .returning({ id: usersTable.id, email: usersTable.email });
+    const hashedPassword = await hashPassword(password);
+    const user = await db
+      .insert(users)
+      .values({ email, password: hashedPassword })
+      .returning({ id: users.id, email: users.email });
 
     return user;
   }
 
   static async login(email: string, password: string) {
     // Find user
-    const [user] = await db
-      .select()
-      .from(usersTable)
-      .where(eq(usersTable.email, email));
+    const user = await db.query.users.findFirst({
+      where: (users, { eq }) => eq(users.email, email),
+    });
 
     if (!user) {
       throw unauthorized('Invalid email or password');
@@ -60,16 +55,15 @@ export class AuthService {
 
   static async verify(token: string) {
     // Verify jwt token
-    const payload = await verifyToken(token);
-    if (!payload.sub) {
+    const { sub: userId } = await verifyToken(token);
+    if (!userId) {
       throw unauthorized('Invalid token');
     }
 
     // Check if user exists
-    const [user] = await db
-      .select()
-      .from(usersTable)
-      .where(eq(usersTable.id, payload.sub));
+    const user = await db.query.users.findFirst({
+      where: (users, { eq }) => eq(users.id, userId),
+    });
     if (!user) {
       throw unauthorized('Invalid token');
     }
