@@ -5,16 +5,19 @@ import { errorMiddleware } from './middlewares/error.middleware';
 import { loggerMiddleware } from './middlewares/logger.middleware';
 import { swaggerServe, swaggerSetup } from './middlewares/swagger.middleware';
 import { publicRoutes } from './routes/public.route';
+import { authRoutes } from './routes/auth.route';
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 // Middlewares
+app.use(express.json());
 app.use(loggerMiddleware);
 app.use('/api-docs', swaggerServe, swaggerSetup);
 
 // Routes
 app.use(publicRoutes);
+app.use('/auth', authRoutes);
 
 // Error Middlewares
 app.use(errorMiddleware);
