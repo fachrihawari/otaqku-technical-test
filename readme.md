@@ -37,6 +37,8 @@ docker exec otaqku-technical-test-app-1 npm run db:seed
 docker compose -f docker-compose.prod.yml down
 ```
 
+> **Note:** I've setup the `docker-compose.tunnel.yml` to run the project using proxy with traefik. It's assuming you have a domain pointing to your server also have traefik container with entrypoints web.
+
 ### Option 2: Local Development (Without Docker)
 
 1. **Install dependencies:**

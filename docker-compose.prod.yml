@@ -20,8 +20,6 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
       - POSTGRES_DB=otaqku_production
-    ports:
-      - "5432:5432"
     volumes:
       - db-prod-data:/var/lib/postgresql/data
     restart: unless-stopped
