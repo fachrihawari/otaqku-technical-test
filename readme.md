@@ -77,7 +77,7 @@ cp .env.example .env
    # The actual connection will be: postgres://username:password@localhost:5432/otaqku_development
    ```
    
-   > **Note:** The system automatically appends `_${NODE_ENV}` to your database URL to separate development and production data.
+   > **Note:** The system automatically appends `_${NODE_ENV}` to your database URL to separate development, production and test data.
 
 4. **Run database migrations:**
 ```bash
