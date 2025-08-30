@@ -5,6 +5,39 @@ const authRoutes = express.Router();
 
 /**
  * @swagger
+ * components:
+ *   schemas:
+ *     AuthBody:
+ *       type: object
+ *       properties:
+ *         email:
+ *           type: string
+ *           format: email
+ *           example: "user@example.com"
+ *         password:
+ *           type: string
+ *           minLength: 6
+ *           example: "password123"
+ *       required:
+ *         - email
+ *         - password
+ *     User:
+ *       allOf:
+ *         - $ref: "#/components/schemas/AuthBody"
+ *         - type: object
+ *           properties:
+ *             id:
+ *               type: string
+ *               format: uuid
+ *               example: "43101af4-2b31-445e-a406-7393ea66a3bb"
+ *             created_at:
+ *               type: string
+ *               format: date-time
+ *               example: "2023-01-01T00:00:00Z"
+ */
+
+ /**
+ * @swagger
  * /auth/register:
  *   post:
  *     description: Register a new user account
@@ -14,19 +47,7 @@ const authRoutes = express.Router();
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - email
- *               - password
- *             properties:
- *               email:
- *                 type: string
- *                 format: email
- *                 example: "user@example.com"
- *               password:
- *                 type: string
- *                 minLength: 6
- *                 example: "password123"
+ *             $ref: "#/components/schemas/AuthBody"
  *     responses:
  *       201:
  *         description: Success
@@ -99,19 +120,7 @@ authRoutes.post('/register', AuthController.register);
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - email
- *               - password
- *             properties:
- *               email:
- *                 type: string
- *                 format: email
- *                 example: "user@example.com"
- *               password:
- *                 type: string
- *                 minLength: 6
- *                 example: "password123"
+ *             $ref: "#/components/schemas/AuthBody"
  *     responses:
  *       200:
  *         description: Success
