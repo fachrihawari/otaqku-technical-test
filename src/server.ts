@@ -29,9 +29,9 @@ app.use('/tasks', taskRoutes);
 app.use(errorMiddleware);
 
 // Start the server
-const isTestEnv = process.env.NODE_ENV === 'test';
+const shouldListen = process.env.NODE_ENV !== 'test';
 
-if (!isTestEnv) {
+if (shouldListen) {
   app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
     console.log(`API Docs is running on http://localhost:${port}/api-docs`);

@@ -7,9 +7,6 @@ export default defineConfig({
       }
     },
     pool: 'threads',
-    poolMatchGlobs: [
-      ['**/*.test.ts', 'threads']
-    ],
     maxConcurrency: 1
   }
 })
