@@ -12,8 +12,8 @@ const port = process.env.PORT || 3000;
 
 // Middlewares
 app.use(express.json());
-app.use(loggerMiddleware);
 app.use('/api-docs', swaggerServe, swaggerSetup);
+app.use(loggerMiddleware);
 
 // Routes
 app.use(publicRoutes);
