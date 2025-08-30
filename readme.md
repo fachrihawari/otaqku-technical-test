@@ -168,6 +168,43 @@ otaqku-technical-test/
 - **API Documentation**: OpenAPI/Swagger
 - **Containerization**: Docker with multi-stage builds
 
+### Layered Architecture
+
+The application follows a **layered architecture pattern** with clear separation of concerns:
+
+```
+┌─────────────────────────────────────┐
+│           Routes Layer              │  ← HTTP routing and middleware
+├─────────────────────────────────────┤
+│         Controllers Layer           │  ← Request/Response handling
+├─────────────────────────────────────┤
+│          Services Layer             │  ← Business logic
+├─────────────────────────────────────┤
+│         Database Layer              │  ← Data access with Drizzle ORM
+└─────────────────────────────────────┘
+```
+
+**Core Layers:**
+- **Routes** (`src/routes/`) - API endpoints and middleware application
+- **Controllers** (`src/controllers/`) - Request/response handling and validation
+- **Services** (`src/services/`) - Business logic and data orchestration
+- **Database** (`src/db/`) - Data persistence with Drizzle ORM
+
+**Supporting Components:**
+- **Middleware** (`src/middlewares/`) - Authentication, logging, error handling
+- **Helpers** (`src/helpers/`) - Utility functions (JWT, hashing, error formatting)
+
+**Why This Architecture?**
+- **Organized Code** - Everything has its place, making it easy to find and fix things
+- **Easy Testing** - Test each part separately without breaking others
+- **Simple Updates** - Change one layer without affecting the rest
+- **Reuse Code** - Use the same functions across multiple features
+
+**Data Flow:**
+```
+HTTP Request → Route → Controller → Service → Database → Response
+```
+
 ## Environment Variables
 
 Create a `.env` file with the following variables:
