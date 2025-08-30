@@ -1,10 +1,17 @@
 import { db } from '../db/db';
-import type { TaskStatus } from '../db/schema';
+import { tasks, type TaskStatus } from '../db/schema';
 
 export type TaskAllOptions = {
   page: number;
   limit: number;
   status?: TaskStatus;
+};
+
+type TaskBody = {
+  title: string;
+  description: string;
+  status: TaskStatus;
+  authorId: string;
 };
 export class TaskService {
   static async all(authorId: string, options: TaskAllOptions) {
@@ -26,5 +33,10 @@ export class TaskService {
       orderBy: (tasks, { desc }) => [desc(tasks.created_at)],
     });
     return tasks;
+  }
+
+  static async create(body: TaskBody) {
+    const [task] = await db.insert(tasks).values(body).returning();
+    return task;
   }
 }

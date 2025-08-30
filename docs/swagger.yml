@@ -51,6 +51,7 @@ components:
         status:
           type: enum
           example: "in_progress"
+          default: "pending"
           enum:
             - "pending"
             - "in_progress"
@@ -300,8 +301,31 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Task"
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
         500:
-          description: Internal server error
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      description: Create a new task
+      tags: [Tasks]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TaskBody"
+              required:
+                - title
+      responses:
+        201:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+        422:
+          description: "Unprocessable Entity"
           content:
             application/json:
               schema:
@@ -309,4 +333,26 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "Internal server error"
+                    example: "Validation failed"
+                  details:
+                    type: object
+                    properties:
+                      title:
+                        type: array
+                        items:
+                          type: string
+                        example: ["Title is required"]
+                      description:
+                        type: array
+                        items:
+                          type: string
+                        example: ["Description is required"]
+                      status:
+                        type: array
+                        items:
+                          type: string
+                        example: ["Status is required"]
+        500:
+          $ref: '#/components/responses/InternalServerError'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
