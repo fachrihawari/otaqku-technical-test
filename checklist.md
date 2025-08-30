@@ -27,10 +27,10 @@
 - [x] Environment configuration
 
 ## 🔐 Authentication
-- [ ] User registration endpoint (POST /auth/register)
-- [ ] User login endpoint (POST /auth/login)
-- [ ] Email + password validation
-- [ ] JWT token generation and verification
+- [x] User registration endpoint (POST /auth/register)
+- [x] User login endpoint (POST /auth/login)
+- [x] Email + password validation
+- [x] JWT token generation and verification
 - [ ] Authentication middleware
 - [ ] User isolation (users can only access their own data)
 

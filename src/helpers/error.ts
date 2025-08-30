@@ -1,5 +1,5 @@
 export enum ErrorCode {
-  BadRequest = 400,
+  UnprocessableEntity = 422,
   Unauthorized = 401,
   Forbidden = 403,
   NotFound = 404,
@@ -18,10 +18,6 @@ export class HttpError extends Error {
 
 export function notFound(message: string) {
   return new HttpError(ErrorCode.NotFound, message);
-}
-
-export function badRequest(message: string) {
-  return new HttpError(ErrorCode.BadRequest, message);
 }
 
 export function unauthorized(message: string) {

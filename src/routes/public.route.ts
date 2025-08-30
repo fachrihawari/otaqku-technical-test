@@ -7,7 +7,8 @@ const publicRoutes = express.Router();
  * @swagger
  * /:
  *   get:
- *     description: Home endpoint!
+ *     description: Public home endpoint
+ *     tags: [Public]
  *     responses:
  *       200:
  *         description: Returns welcome message.
