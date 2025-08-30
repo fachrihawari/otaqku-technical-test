@@ -41,6 +41,10 @@ export class TaskService {
     return task;
   }
 
+  static async delete(id: string) {
+    await db.delete(tasks).where(eq(tasks.id, id));
+  }
+
   static async detail(id: string) {
     return await db.query.tasks.findFirst({ where: (tasks, { eq }) => eq(tasks.id, id) });
   }

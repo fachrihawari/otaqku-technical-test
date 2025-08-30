@@ -55,4 +55,11 @@ export class TaskController {
 
     res.status(200).json(task);
   }
+
+  static async delete(req: Request, res: Response) {
+    // Delete task using the service
+    await TaskService.delete(req.task.id);
+
+    res.status(200).json({ message: "Task deleted successfully" });
+  }
 }

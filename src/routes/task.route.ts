@@ -8,5 +8,6 @@ taskRoutes.get('/', TaskController.all);
 taskRoutes.post('/', TaskController.create);
 taskRoutes.get('/:id', ownerOnly, TaskController.detail);
 taskRoutes.put('/:id', ownerOnly, TaskController.update);
+taskRoutes.delete('/:id', ownerOnly, TaskController.delete);
 
 export { taskRoutes };

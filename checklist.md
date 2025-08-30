@@ -38,8 +38,8 @@
 - [x] POST /tasks → Create a new task
 - [x] GET /tasks → List all tasks for authenticated user
 - [x] GET /tasks/:id → Retrieve a single task
-- [ ] PUT /tasks/:id → Update a task
-- [ ] DELETE /tasks/:id → Delete a task
+- [x] PUT /tasks/:id → Update a task
+- [x] DELETE /tasks/:id → Delete a task
 
 ## ⚠️ Error Handling
 - [x] Appropriate HTTP status codes
