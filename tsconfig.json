@@ -21,6 +21,7 @@
     "declaration": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
+    "removeComments": true,
 
     // Advanced Options
     "resolveJsonModule": true
