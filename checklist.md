@@ -58,7 +58,6 @@
 - [x] Pagination in task listing
 - [ ] Bulk update endpoint
 - [x] API documentation (Swagger/OpenAPI)
-- [ ] Unit tests
 - [ ] Integration tests
 
 ## 📚 Documentation & Deployment

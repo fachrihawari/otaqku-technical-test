@@ -17,10 +17,10 @@ export class AuthService {
 
     // Create new user
     const hashedPassword = await hashPassword(password);
-    const user = await db
+    const [user] = await db
       .insert(users)
       .values({ email, password: hashedPassword })
-      .returning({ id: users.id, email: users.email });
+      .returning({ id: users.id, email: users.email, created_at: users.created_at });
 
     return user;
   }
