@@ -39,4 +39,8 @@ export class TaskService {
     const [task] = await db.insert(tasks).values(body).returning();
     return task;
   }
+
+  static async detail(id: string) {
+    return await db.query.tasks.findFirst({ where: (tasks, { eq }) => eq(tasks.id, id) });
+  }
 }

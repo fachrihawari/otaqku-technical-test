@@ -356,3 +356,30 @@ paths:
           $ref: '#/components/responses/InternalServerError'
         401:
           $ref: '#/components/responses/UnauthorizedError'
+
+
+  /tasks/:id:
+    get:
+      description: Get task by ID
+      tags: [Tasks]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/ForbiddenError'
+        404:
+          $ref: '#/components/responses/NotFoundError'
+        500:
+          $ref: '#/components/responses/InternalServerError'

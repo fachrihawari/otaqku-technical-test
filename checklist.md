@@ -35,9 +35,9 @@
 - [x] User isolation (users can only access their own data)
 
 ## 📋 Task Management API
-- [ ] POST /tasks → Create a new task
+- [x] POST /tasks → Create a new task
 - [x] GET /tasks → List all tasks for authenticated user
-- [ ] GET /tasks/:id → Retrieve a single task
+- [x] GET /tasks/:id → Retrieve a single task
 - [ ] PUT /tasks/:id → Update a task
 - [ ] DELETE /tasks/:id → Delete a task
 

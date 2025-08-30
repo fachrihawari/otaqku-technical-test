@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import z from 'zod';
 import { TaskStatus } from '../db/schema';
 import { TaskService } from '../services/task.service';
+import { notFound } from '../helpers/error';
 
 const tasksAllQuerySchema = z.object({
   page: z.coerce.number().min(1).default(1),
@@ -35,5 +36,17 @@ export class TaskController {
     });
 
     res.status(201).json(task);
+  }
+
+  static async detail(req: Request, res: Response) {
+    const taskId = req.params.id;
+
+    const task = await TaskService.detail(taskId);
+
+    if (!task) {
+      throw notFound("Task not found");
+    }
+
+    res.status(200).json(task);
   }
 }
