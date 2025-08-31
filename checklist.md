@@ -14,14 +14,14 @@
   - [x] id (primary key)
   - [x] email (string, required)
   - [x] password (string, required)
-  - [x] createdAt (timestamp)
+  - [x] created_at (timestamp)
 - [x] tasks table
   - [x] id (primary key)
   - [x] title (string, required)
   - [x] description (text, optional)
   - [x] status (enum: pending/in-progress/completed)
-  - [x] createdAt (timestamp)
-  - [x] updatedAt (timestamp)
+  - [x] created_at (timestamp)
+  - [x] updated_at (timestamp)
   - [x] authorId (foreign key, for user isolation)
 - [x] Database instance setup
 - [x] Environment configuration
