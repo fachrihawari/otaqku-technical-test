@@ -76,10 +76,11 @@ cp .env.example .env
    ```env
    NODE_ENV=development
    DATABASE_URL=postgres://username:password@localhost:5432/otaqku
-   # The actual connection will be: postgres://username:password@localhost:5432/otaqku_development
+   # The system automatically appends _${NODE_ENV} to create the actual database name
+   # Actual connection becomes: postgres://username:password@localhost:5432/otaqku_development
    ```
    
-   > **Note:** The system automatically appends `_${NODE_ENV}` to your database URL to separate development, production and test data.
+   > **Note:** The system automatically appends `_${NODE_ENV}` to your database URL to create environment-specific databases.
 
 4. **Run database migrations:**
 ```bash
@@ -138,6 +139,7 @@ otaqku-technical-test/
 │   │   ├── auth.service.ts         # Authentication business logic
 │   │   ├── public.service.ts       # Public endpoints business logic
 │   │   └── task.service.ts         # Task management business logic
+│   ├── tmp/                        # Temporary files directory
 │   ├── server.ts                   # Main application entry point
 │   └── types.d.ts                  # TypeScript type definitions
 ├── tests/                          # Test files
@@ -150,8 +152,12 @@ otaqku-technical-test/
 │   ├── tasks-delete.test.ts        # Task deletion tests
 │   ├── tasks-detail.test.ts        # Task detail tests
 │   └── tasks-update.test.ts        # Task update tests
+├── .env.example                    # Environment variables template
+├── .github/                        # GitHub workflows and templates
+├── biome.json                      # Biome configuration for linting
 ├── docker-compose.dev.yml          # Development Docker Compose
 ├── docker-compose.prod.yml         # Production Docker Compose
+├── docker-compose.tunnel.yml       # Production with Traefik proxy
 ├── Dockerfile                      # Multi-stage Docker build
 ├── package.json                    # Dependencies and scripts
 ├── tsconfig.json                   # TypeScript configuration
@@ -165,11 +171,11 @@ otaqku-technical-test/
 - **Runtime**: Node.js with TypeScript
 - **Framework**: Express.js
 - **Database**: PostgreSQL with Drizzle ORM
-- **Authentication**: JWT (JSON Web Tokens)
+- **Authentication**: JWT with Jose library (JSON Web Tokens)
 - **Password Hashing**: bcryptjs
-- **Logging**: Pino
+- **Logging**: Pino with pino-http
 - **Testing**: Vitest with Supertest
-- **API Documentation**: OpenAPI/Swagger
+- **API Documentation**: OpenAPI/Swagger via Scalar
 - **Containerization**: Docker with multi-stage builds
 
 ### Layered Architecture
@@ -206,8 +212,13 @@ The application follows a **layered architecture pattern** with clear separation
 
 **Data Flow:**
 ```
-HTTP Request → Route → Controller → Service → Database → Response
+HTTP Request → Logger Middleware → Route → [Auth Middleware*] → [Route Middleware] → Controller → Service → Database → Response
+                     ↓                              ↓                    ↓
+                All requests              Protected routes only       Optional 
+                                                                  (e.g. ownerOnly)
 ```
+
+*Auth middleware only applies to routes under `/tasks`
 
 ## Environment Variables
 
@@ -215,8 +226,8 @@ Create a `.env` file with the following variables:
 
 ```env
 NODE_ENV=development
-DATABASE_URL=postgres://username:password@localhost:5432/database_name
-JWT_SECRET=your-super-secret-jwt-key
+DATABASE_URL=postgres://user:password@localhost:5432/mydatabase
+JWT_SECRET=your_jwt_secret
 ```
 
 ## Available Scripts
@@ -251,19 +262,32 @@ npm run lint         # Run linter and auto-fix issues
 
 ## Deployment Strategy
 
-The application is deployed using Docker containers with the following strategy:
-
 ### Infrastructure Setup
-- **Platform**: Home Server + Cloudflare tunnel
+- **Platform**: Home Server + Cloudflare Tunnel
 - **Reverse Proxy**: Traefik for SSL termination and routing
-- **Database**: PostgreSQL Docker container with persistent volumes
-- **Application**: Multi-stage Docker build
+- **Database**: PostgreSQL 15 Docker container with persistent volumes
+- **Application**: Multi-stage Docker build for optimized production images
 - **CI/CD**: GitHub Actions for automated testing and deployment
 
 ### SSL and Domain Setup
-- **Domain**: https://otaqku-api.hawari.dev
+- **Domain**: https://otaqku-api.hawari.dev  
 - **SSL**: Automated with Let's Encrypt via Traefik
-- **Configuration**: `docker-compose.tunnel.yml` with Traefik labels
+- **Configuration**: `docker-compose.tunnel.yml` with Traefik labels for reverse proxy
+
+### Monitoring
+```bash
+# View application logs
+docker logs otaqku-technical-test-app-prod-1 -f
+
+# View database logs  
+docker logs otaqku-technical-test-db-prod-1 -f
+
+# View all logs
+docker compose -f docker-compose.prod.yml logs -f
+
+# Health check
+curl https://otaqku-api.hawari.dev/
+```
 
 ## Database Schema
 
@@ -286,13 +310,15 @@ The application uses PostgreSQL with the following schema:
 | `title` | VARCHAR(100) | NOT NULL | Task title (max 100 characters) |
 | `description` | TEXT | NULLABLE | Task description (max 500 characters) |
 | `status` | task_status | NOT NULL, DEFAULT 'pending' | Task status enum |
-| `author_id` | UUID | NOT NULL, FOREIGN KEY → users(id) | Task owner reference |
+| `authorId` | UUID | NOT NULL, FOREIGN KEY → users(id) | Task owner reference |
 | `created_at` | TIMESTAMP | NOT NULL, DEFAULT NOW() | Task creation timestamp |
 | `updated_at` | TIMESTAMP | NOT NULL, DEFAULT NOW() | Last update timestamp (auto-updated) |
 
+> I just realized that the `authorId` is not being a snake_case 😭 
+
 ### Relationships
 - **One-to-Many**: `users` → `tasks` (One user can have many tasks)
-- **Foreign Key**: `tasks.author_id` references `users.id`
+- **Foreign Key**: `tasks.authorId` references `users.id`
 
 ### Enums
 - **task_status**: `'pending'`, `'in_progress'`, `'completed'`
