@@ -31,7 +31,7 @@ docker compose -f docker-compose.dev.yml down
 docker compose -f docker-compose.prod.yml up --build -d
 
 # Seed the database (in another terminal)
-docker exec otaqku-technical-test-app-1 npm run db:seed
+docker exec otaqku-technical-test-app-prod-1 npm run db:seed
 
 # Stop the services
 docker compose -f docker-compose.prod.yml down
