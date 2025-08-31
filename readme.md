@@ -62,6 +62,8 @@ Backend Engineer Technical Test - A RESTful API for task management built with E
    docker compose -f docker-compose.dev.yml down
    ```
 
+   > **🚀 Access your application**: Once the containers are running, visit http://localhost:3000
+
 #### Production Mode
    
    ```bash
@@ -74,6 +76,8 @@ Backend Engineer Technical Test - A RESTful API for task management built with E
    # Stop the services
    docker compose -f docker-compose.prod.yml down
    ```
+
+   > **🚀 Access your application**: Once the containers are running, visit http://localhost:3000
 
    > **Note:** I've setup the `docker-compose.tunnel.yml` to run the project using proxy with traefik. It's assuming you have a domain pointing to your server also have traefik container with entrypoints web.
 
