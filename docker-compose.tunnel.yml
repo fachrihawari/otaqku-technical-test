@@ -2,9 +2,9 @@ services:
   app-prod:
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.hawari.rule=Host(`otaqku-api.hawari.dev`)"
-      - "traefik.http.routers.hawari.entrypoints=web"
-      - "traefik.http.services.hawari.loadbalancer.server.port=3000"
+      - "traefik.http.routers.otaqku.rule=Host(`otaqku-api.hawari.dev`)"
+      - "traefik.http.routers.otaqku.entrypoints=web"
+      - "traefik.http.services.otaqku.loadbalancer.server.port=3000"
     networks:
       - traefik-network
   db-prod:

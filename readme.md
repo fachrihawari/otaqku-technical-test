@@ -98,7 +98,9 @@ npm run dev
 
 ## API Documentation
 
-Once the server is running, you can access:
+**Live Deployment**: [https://otaqku-api.hawari.dev](https://otaqku-api.hawari.dev)
+
+Once the server is running locally, you can access:
 - **API Base URL**: `http://localhost:3000`
 - **API Documentation**: `http://localhost:3000/api-docs`
 - **OpenAPI Spec**: `http://localhost:3000/openapi.json`
@@ -247,11 +249,27 @@ npm run lint         # Run linter and auto-fix issues
 4. **Database changes** - Use `npm run db:generate` and `npm run db:migrate`
 5. **Update documentation** - Modify `docs/swagger.yml` for API changes
 
+## Deployment Strategy
+
+The application is deployed using Docker containers with the following strategy:
+
+### Infrastructure Setup
+- **Platform**: Home Server + Cloudflare tunnel
+- **Reverse Proxy**: Traefik for SSL termination and routing
+- **Database**: PostgreSQL Docker container with persistent volumes
+- **Application**: Multi-stage Docker build
+- **CI/CD**: GitHub Actions for automated testing and deployment
+
+### SSL and Domain Setup
+- **Domain**: https://otaqku-api.hawari.dev
+- **SSL**: Automated with Let's Encrypt via Traefik
+- **Configuration**: `docker-compose.tunnel.yml` with Traefik labels
+
 ## Database Schema
 
 The application uses PostgreSQL with the following schema:
 
-### **Users Table**
+### Users Table
 
 | Column | Type | Constraints | Description |
 |--------|------|-------------|-------------|
@@ -260,7 +278,7 @@ The application uses PostgreSQL with the following schema:
 | `password` | VARCHAR(255) | NOT NULL | Hashed password (bcrypt) |
 | `created_at` | TIMESTAMP | NOT NULL, DEFAULT NOW() | User registration timestamp |
 
-### **Tasks Table**
+### Tasks Table
 
 | Column | Type | Constraints | Description |
 |--------|------|-------------|-------------|
@@ -272,9 +290,10 @@ The application uses PostgreSQL with the following schema:
 | `created_at` | TIMESTAMP | NOT NULL, DEFAULT NOW() | Task creation timestamp |
 | `updated_at` | TIMESTAMP | NOT NULL, DEFAULT NOW() | Last update timestamp (auto-updated) |
 
-### **Relationships**
+### Relationships
 - **One-to-Many**: `users` → `tasks` (One user can have many tasks)
 - **Foreign Key**: `tasks.author_id` references `users.id`
 
-### **Enums**
+### Enums
 - **task_status**: `'pending'`, `'in_progress'`, `'completed'`
+
