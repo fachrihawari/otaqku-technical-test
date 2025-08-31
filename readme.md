@@ -252,6 +252,44 @@ HTTP Request → Logger Middleware → Route → [Auth Middleware*] → [Route M
 
 *Auth middleware only applies to routes under `/tasks`
 
+## Running Tests
+
+This project uses **Vitest** for testing with comprehensive test coverage for all API endpoints.
+
+### Prerequisites for Testing
+- Make sure you have completed the "Getting Started" setup steps
+- Ensure your `.env` file is properly configured
+- Tests will automatically use the `test` database (e.g., `otaqku_test`)
+- **Important**: Run database migrations for the test environment:
+  ```bash
+  NODE_ENV=test npm run db:migrate
+  ```
+
+### Test Commands
+
+```bash
+# Run all tests once
+npm test
+
+# Run tests in watch mode (re-runs on file changes)
+npm run test:watch
+
+# Run tests with coverage report
+npm run test:coverage
+```
+
+### Test Structure
+The test files are located in the `tests/` directory and cover:
+- **Authentication**: Registration and login functionality
+- **Public endpoints**: Home and OpenAPI documentation
+- **Task management**: CRUD operations with proper authorization
+- **Error handling**: Invalid requests and edge cases
+
+Each test file focuses on a specific feature:
+- `auth-*.test.ts` - Authentication endpoints
+- `public-*.test.ts` - Public endpoints  
+- `tasks-*.test.ts` - Task management endpoints
+
 ## Available Scripts
 
 ```bash
