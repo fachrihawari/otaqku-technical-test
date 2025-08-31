@@ -4,6 +4,7 @@ Backend Engineer Technical Test - A RESTful API for task management built with E
 
 ## System Requirements
 
+- **Git**: Version 2.x or higher (tested with v2.39.5)
 - **Node.js**: v22.x or higher (tested with v22.12.0)
 - **Docker**: v28.x or higher (tested with v28.3.3)
 - **Docker Compose**: v2.x or higher (tested with v2.39.2)
@@ -11,91 +12,120 @@ Backend Engineer Technical Test - A RESTful API for task management built with E
 
 ## How to Run Locally
 
-### Option 1: Using Docker (Recommended)
+### Getting Started
 
-#### Development Mode
-```bash
-# Start development environment with hot reloading
-docker compose -f docker-compose.dev.yml up --build
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/fachrihawari/otaqku-technical-test.git
+   cd otaqku-technical-test
+   ```
 
-# Seed the database (in another terminal)
-docker exec otaqku-technical-test-app-dev-1 npm run db:seed
-
-# Stop the services
-docker compose -f docker-compose.dev.yml down
-```
-
-#### Production Mode
-```bash
-# Start production environment
-docker compose -f docker-compose.prod.yml up --build -d
-
-# Seed the database (in another terminal)
-docker exec otaqku-technical-test-app-prod-1 npm run db:seed
-
-# Stop the services
-docker compose -f docker-compose.prod.yml down
-```
-
-> **Note:** I've setup the `docker-compose.tunnel.yml` to run the project using proxy with traefik. It's assuming you have a domain pointing to your server also have traefik container with entrypoints web.
-
-### Option 2: Local Development (Without Docker)
-
-1. **Install dependencies:**
-```bash
-npm install
-```
-
-2. **Setup environment variables:**
-```bash
-cp .env.example .env
-# Edit .env with your database credentials
-```
-
-3. **Prepare PostgreSQL databases:**
-   
-   The application uses a database naming pattern based on NODE_ENV:
-   - **Development**: `your_database_name_development`
-   - **Production**: `your_database_name_production`
-   - **Test**: `your_database_name_test`
-   
-   Create the required databases in PostgreSQL:
-   ```sql
-   -- Connect to PostgreSQL as superuser
-   CREATE DATABASE otaqku_development;
-   CREATE DATABASE otaqku_production;
-   CREATE DATABASE otaqku_test;
-
-   -- Grant permissions (adjust username as needed)
-   GRANT ALL PRIVILEGES ON DATABASE otaqku_development TO your_username;
-   GRANT ALL PRIVILEGES ON DATABASE otaqku_production TO your_username;
-   GRANT ALL PRIVILEGES ON DATABASE otaqku_test TO your_username;
+2. **Create environment file:**
+   ```bash
+   cp .env.example .env
+   # Edit .env with your preferred values (optional for Docker setup)
    ```
 
    **Environment Variables Pattern:**
    ```env
+   # NODE_ENV is the environment the app is running in: development, production, test
    NODE_ENV=development
+
+   # JWT_SECRET is the secret key used for signing JWT tokens
+   JWT_SECRET=your_jwt_secret
+
+   # DATABASE_URL is the database connection URL
    DATABASE_URL=postgres://username:password@localhost:5432/otaqku
    # The system automatically appends _${NODE_ENV} to create the actual database name
    # Actual connection becomes: postgres://username:password@localhost:5432/otaqku_development
+
+   # If you're using docker-compose.prod.yml, you can set the PostgreSQL database password for docker-compose.prod.yml
+   POSTGRES_PASSWORD=your_postgres_password
    ```
    
    > **Note:** The system automatically appends `_${NODE_ENV}` to your database URL to create environment-specific databases.
 
-4. **Run database migrations:**
-```bash
-npm run db:migrate
-```
+### Option 1: Using Docker (Recommended)
 
-5. **Seed the database:**
-```bash
-npm run db:seed
-```
+#### Development Mode
 
-6. **Start development server:**
-```bash
-npm run dev
-```
+   ```bash
+   # Start development environment with hot reloading
+   docker compose -f docker-compose.dev.yml up --build
+
+   # Seed the database (in another terminal)
+   docker exec otaqku-technical-test-app-dev-1 npm run db:seed
+
+   # Stop the services
+   docker compose -f docker-compose.dev.yml down
+   ```
+
+#### Production Mode
+   
+   ```bash
+   # Start production environment
+   docker compose -f docker-compose.prod.yml up --build -d
+
+   # Seed the database (in another terminal)
+   docker exec otaqku-technical-test-app-prod-1 npm run db:seed
+
+   # Stop the services
+   docker compose -f docker-compose.prod.yml down
+   ```
+
+   > **Note:** I've setup the `docker-compose.tunnel.yml` to run the project using proxy with traefik. It's assuming you have a domain pointing to your server also have traefik container with entrypoints web.
+
+### Option 2: Local Development (Without Docker)
+
+   > **Prerequisites**: Make sure you have completed the "Getting Started" steps above.
+
+   1. **Install dependencies:**
+
+      ```bash
+      npm install
+      ```
+
+   2. **Setup environment variables:**
+
+      ```bash
+      # .env file should already exist from Getting Started steps
+      # Edit .env with your database credentials
+      ```
+
+   3. **Prepare PostgreSQL databases:**
+      
+      The application uses a database naming pattern based on NODE_ENV:
+      - **Development**: `your_database_name_development`
+      - **Production**: `your_database_name_production`
+      - **Test**: `your_database_name_test`
+      
+      Create the required databases in PostgreSQL:
+      ```sql
+      -- Connect to PostgreSQL as superuser
+      CREATE DATABASE otaqku_development;
+      CREATE DATABASE otaqku_production;
+      CREATE DATABASE otaqku_test;
+
+      -- Grant permissions (adjust username as needed)
+      GRANT ALL PRIVILEGES ON DATABASE otaqku_development TO your_username;
+      GRANT ALL PRIVILEGES ON DATABASE otaqku_production TO your_username;
+      GRANT ALL PRIVILEGES ON DATABASE otaqku_test TO your_username;
+      ```
+
+   4. **Run database migrations:**
+      ```bash
+      npm run db:migrate
+      ```
+
+   5. **Seed the database:**
+      ```bash
+      npm run db:seed
+      ```
+
+   6. **Start development server:**
+      ```bash
+      npm run dev
+      ```
 
 ## API Documentation
 
@@ -219,16 +249,6 @@ HTTP Request → Logger Middleware → Route → [Auth Middleware*] → [Route M
 ```
 
 *Auth middleware only applies to routes under `/tasks`
-
-## Environment Variables
-
-Create a `.env` file with the following variables:
-
-```env
-NODE_ENV=development
-DATABASE_URL=postgres://user:password@localhost:5432/mydatabase
-JWT_SECRET=your_jwt_secret
-```
 
 ## Available Scripts
 
