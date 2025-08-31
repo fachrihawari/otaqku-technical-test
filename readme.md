@@ -59,6 +59,8 @@ Backend Engineer Technical Test - A RESTful API for task management built with E
    docker exec otaqku-technical-test-app-dev-1 npm run db:seed
 
    # Stop the services
+   # Press Ctrl+C in the terminal where docker compose is running
+   # Or run below command to completely remove the container (in another terminal)
    docker compose -f docker-compose.dev.yml down
    ```
 
