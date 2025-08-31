@@ -10,8 +10,8 @@ services:
       - /app/node_modules  # Prevent overriding node_modules
     environment:
       - NODE_ENV=development
-      - DATABASE_URL=postgres://postgres:postgres@db-dev:5432/otaqku
-      - JWT_SECRET=secret
+      - DATABASE_URL=postgres://postgres:${POSTGRES_PASSWORD:-postgres}@db-dev:5432/otaqku
+      - JWT_SECRET=${JWT_SECRET:-secret}
     restart: unless-stopped
     depends_on:
       db-dev:
@@ -21,10 +21,10 @@ services:
     image: postgres:15.14-alpine
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
       - POSTGRES_DB=otaqku_development
     ports:
-      - "5432:5432"
+      - 5432
     volumes:
       - db-dev-data:/var/lib/postgresql/data
     healthcheck:
