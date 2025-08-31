@@ -47,6 +47,8 @@ Backend Engineer Technical Test - A RESTful API for task management built with E
 
 ### Option 1: Using Docker (Recommended)
 
+> **Prerequisites**: Make sure Docker is installed and running on your system. You can verify by running `docker --version` and `docker compose version`.
+
 #### Development Mode
 
    ```bash
